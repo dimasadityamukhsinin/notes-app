@@ -1,34 +1,6 @@
 'use client'
 
-import { initializeApp } from 'firebase/app'
-import {
-  getFirestore,
-  collection,
-  getDocs,
-  addDoc,
-  updateDoc,
-  doc,
-  deleteDoc,
-  Timestamp,
-} from 'firebase/firestore'
 import { useEffect, useState } from 'react'
-
-// Firebase configuration (replace with your own config)
-const firebaseConfig = {
-  apiKey: 'AIzaSyBk4hwuO05IIf-BoqJJqlxLO1G2F6nkpQ0',
-  authDomain: 'gathery-24b75.firebaseapp.com',
-  databaseURL:
-    'https://gathery-24b75-default-rtdb.asia-southeast1.firebasedatabase.app',
-  projectId: 'gathery-24b75',
-  storageBucket: 'gathery-24b75.firebasestorage.app',
-  messagingSenderId: '982289610156',
-  appId: '1:982289610156:web:c141a39efa9afbc0577609',
-  measurementId: 'G-EC27EZZR2J',
-}
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig)
-const db = getFirestore(app)
 
 export default function Home() {
   const [notes, setNotes] = useState([])
