@@ -1,11 +1,11 @@
 import { loadNotes, saveNotes, createOrUpdateNote, deleteNote, timeAgo } from '../utils/noteUtils'
 
-describe('Utility functions', () => {
+describe('Unit test', () => {
   beforeEach(() => {
     localStorage.clear()
   })
 
-  test('should load notes from localStorage', () => {
+  test('Harus memuat catatan dari localStorage', () => {
     const mockNotes = [{ id: '1', title: 'Test', content: 'Test content' }]
     localStorage.setItem('notes', JSON.stringify(mockNotes))
 

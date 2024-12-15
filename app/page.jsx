@@ -1,6 +1,12 @@
 'use client'
 
-import { createOrUpdateNote, deleteNote, loadNotes, saveNotes, timeAgo } from '@/utils/noteUtils'
+import {
+  createOrUpdateNote,
+  deleteNote,
+  loadNotes,
+  saveNotes,
+  timeAgo,
+} from '@/utils/noteUtils'
 import { useEffect, useState } from 'react'
 
 export default function Home() {
@@ -24,7 +30,12 @@ export default function Home() {
   const handleSubmit = (e) => {
     e.preventDefault()
 
-    const updatedNotes = createOrUpdateNote(notes, noteTitle, noteContent, editId)
+    const updatedNotes = createOrUpdateNote(
+      notes,
+      noteTitle,
+      noteContent,
+      editId,
+    )
     setNotes(updatedNotes)
 
     setNoteTitle('')
@@ -139,7 +150,10 @@ export default function Home() {
                       </g>
                     </svg>
                   </button>
-                  <button data-testid="delete" onClick={() => deleteNoteHandler(note.id)}>
+                  <button
+                    data-testid="delete"
+                    onClick={() => deleteNoteHandler(note.id)}
+                  >
                     <svg
                       width="24"
                       height="24"

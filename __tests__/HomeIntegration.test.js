@@ -1,11 +1,12 @@
 import Home from "@/app/page";
 import { render, screen, fireEvent } from "@testing-library/react";
 
-describe("Home Component", () => {
+describe("Integration Test", () => {
   beforeEach(() => {
     localStorage.clear();
   });
-  test("should render the note form", () => {
+
+  test("Harus menampilkan formulir catatan", () => {
     render(<Home />);
 
     expect(screen.getByTestId("note-form")).toBeInTheDocument();
@@ -13,7 +14,7 @@ describe("Home Component", () => {
     expect(screen.getByTestId("note-content")).toBeInTheDocument();
   });
 
-  test("should add a new note", () => {
+  test("Harus menambahkan catatan baru", () => {
     render(<Home />);
 
     fireEvent.change(screen.getByTestId("note-title"), {
@@ -28,7 +29,7 @@ describe("Home Component", () => {
     expect(screen.getByText("Test Content")).toBeInTheDocument();
   });
 
-  test("should edit an existing note", () => {
+  test("Harus mengedit catatan yang sudah ada", () => {
     render(<Home />);
 
     fireEvent.change(screen.getByTestId("note-title"), {
@@ -53,7 +54,7 @@ describe("Home Component", () => {
     expect(screen.getByText("Updated Content")).toBeInTheDocument();
   });
 
-  test("should delete a note", () => {
+  test("Harus menghapus sebuah catatan", () => {
     render(<Home />);
 
     fireEvent.change(screen.getByTestId("note-title"), {
