@@ -1,34 +1,13 @@
 'use client'
 
-import { initializeApp } from 'firebase/app'
 import {
-  getFirestore,
-  collection,
-  getDocs,
-  addDoc,
-  updateDoc,
-  doc,
-  deleteDoc,
-  Timestamp,
-} from 'firebase/firestore'
+  createOrUpdateNote,
+  deleteNote,
+  loadNotes,
+  saveNotes,
+  timeAgo,
+} from '@/utils/noteUtils'
 import { useEffect, useState } from 'react'
-
-// Firebase configuration (replace with your own config)
-const firebaseConfig = {
-  apiKey: 'AIzaSyBk4hwuO05IIf-BoqJJqlxLO1G2F6nkpQ0',
-  authDomain: 'gathery-24b75.firebaseapp.com',
-  databaseURL:
-    'https://gathery-24b75-default-rtdb.asia-southeast1.firebasedatabase.app',
-  projectId: 'gathery-24b75',
-  storageBucket: 'gathery-24b75.firebasestorage.app',
-  messagingSenderId: '982289610156',
-  appId: '1:982289610156:web:c141a39efa9afbc0577609',
-  measurementId: 'G-EC27EZZR2J',
-}
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig)
-const db = getFirestore(app)
 
 export default function Home() {
   const [notes, setNotes] = useState([])
@@ -36,40 +15,28 @@ export default function Home() {
   const [noteContent, setNoteContent] = useState('')
   const [editId, setEditId] = useState(null)
 
-  // Load notes from localStorage on initial render
+  // Load notes on initial render
   useEffect(() => {
-    const savedNotes = JSON.parse(localStorage.getItem('notes')) || []
+    const savedNotes = loadNotes()
     setNotes(savedNotes)
   }, [])
 
-  // Save notes to localStorage whenever notes state changes
+  // Save notes whenever notes state changes
   useEffect(() => {
-    localStorage.setItem('notes', JSON.stringify(notes))
+    saveNotes(notes)
   }, [notes])
 
-  // Handle form submission to add or update a note
+  // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault()
 
-    const newNote = {
-      id: Date.now().toString(),
-      title: noteTitle,
-      content: noteContent,
-      timestamp: Date.now(), // Add timestamp to the note
-    }
-
-    if (editId) {
-      // Update existing note
-      const updatedNotes = notes.map((note) =>
-        note.id === editId
-          ? { ...note, title: noteTitle, content: noteContent }
-          : note,
-      )
-      setNotes(updatedNotes)
-    } else {
-      // Add new note
-      setNotes([...notes, newNote])
-    }
+    const updatedNotes = createOrUpdateNote(
+      notes,
+      noteTitle,
+      noteContent,
+      editId,
+    )
+    setNotes(updatedNotes)
 
     setNoteTitle('')
     setNoteContent('')
@@ -85,24 +52,9 @@ export default function Home() {
   }
 
   // Handle deleting a note
-  const deleteNote = (id) => {
-    const updatedNotes = notes.filter((note) => note.id !== id)
+  const deleteNoteHandler = (id) => {
+    const updatedNotes = deleteNote(notes, id)
     setNotes(updatedNotes)
-  }
-
-  // Helper function to calculate "x days ago"
-  const timeAgo = (timestamp) => {
-    const now = new Date()
-    const diffInMs = now - new Date(timestamp)
-    const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24)) // Convert milliseconds to days
-
-    if (diffInDays === 0) {
-      return 'Today'
-    } else if (diffInDays === 1) {
-      return '1 day ago'
-    } else {
-      return `${diffInDays} days ago`
-    }
   }
 
   return (
@@ -198,7 +150,10 @@ export default function Home() {
                       </g>
                     </svg>
                   </button>
-                  <button data-testid="delete" onClick={() => deleteNote(note.id)}>
+                  <button
+                    data-testid="delete"
+                    onClick={() => deleteNoteHandler(note.id)}
+                  >
                     <svg
                       width="24"
                       height="24"

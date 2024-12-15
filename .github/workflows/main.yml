@@ -1,4 +1,4 @@
-name: Test and Deploy to Vercel
+name: CI/CD for Vercel
 
 on:
   push:
@@ -8,10 +8,10 @@ on:
   pull_request:
     branches:
       - staging
-      - main
 
 jobs:
   test:
+    if: github.ref == 'refs/heads/staging'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -39,6 +39,6 @@ jobs:
         uses: amondnet/vercel-action@v20
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-args: ${{ github.ref == 'refs/heads/main' && '--prod' || '' }}
+          vercel-args: ${{ github.ref == 'refs/heads/main' && '--prod --yes' || '--yes' }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
