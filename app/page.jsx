@@ -1,5 +1,6 @@
 'use client'
 
+import { createOrUpdateNote, deleteNote, loadNotes, saveNotes, timeAgo } from '@/utils/noteUtils'
 import { useEffect, useState } from 'react'
 
 export default function Home() {
@@ -8,40 +9,23 @@ export default function Home() {
   const [noteContent, setNoteContent] = useState('')
   const [editId, setEditId] = useState(null)
 
-  // Load notes from localStorage on initial render
+  // Load notes on initial render
   useEffect(() => {
-    const savedNotes = JSON.parse(localStorage.getItem('notes')) || []
+    const savedNotes = loadNotes()
     setNotes(savedNotes)
   }, [])
 
-  // Save notes to localStorage whenever notes state changes
+  // Save notes whenever notes state changes
   useEffect(() => {
-    localStorage.setItem('notes', JSON.stringify(notes))
+    saveNotes(notes)
   }, [notes])
 
-  // Handle form submission to add or update a note
+  // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault()
 
-    const newNote = {
-      id: Date.now().toString(),
-      title: noteTitle,
-      content: noteContent,
-      timestamp: Date.now(), // Add timestamp to the note
-    }
-
-    if (editId) {
-      // Update existing note
-      const updatedNotes = notes.map((note) =>
-        note.id === editId
-          ? { ...note, title: noteTitle, content: noteContent }
-          : note,
-      )
-      setNotes(updatedNotes)
-    } else {
-      // Add new note
-      setNotes([...notes, newNote])
-    }
+    const updatedNotes = createOrUpdateNote(notes, noteTitle, noteContent, editId)
+    setNotes(updatedNotes)
 
     setNoteTitle('')
     setNoteContent('')
@@ -57,24 +41,9 @@ export default function Home() {
   }
 
   // Handle deleting a note
-  const deleteNote = (id) => {
-    const updatedNotes = notes.filter((note) => note.id !== id)
+  const deleteNoteHandler = (id) => {
+    const updatedNotes = deleteNote(notes, id)
     setNotes(updatedNotes)
-  }
-
-  // Helper function to calculate "x days ago"
-  const timeAgo = (timestamp) => {
-    const now = new Date()
-    const diffInMs = now - new Date(timestamp)
-    const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24)) // Convert milliseconds to days
-
-    if (diffInDays === 0) {
-      return 'Today'
-    } else if (diffInDays === 1) {
-      return '1 day ago'
-    } else {
-      return `${diffInDays} days ago`
-    }
   }
 
   return (
@@ -170,7 +139,7 @@ export default function Home() {
                       </g>
                     </svg>
                   </button>
-                  <button data-testid="delete" onClick={() => deleteNote(note.id)}>
+                  <button data-testid="delete" onClick={() => deleteNoteHandler(note.id)}>
                     <svg
                       width="24"
                       height="24"
