@@ -1,4 +1,4 @@
-name: Test and Deploy to Vercel
+name: CI/CD for Vercel
 
 on:
   push:
@@ -8,10 +8,10 @@ on:
   pull_request:
     branches:
       - staging
-      - main
 
 jobs:
   test:
+    if: github.ref == 'refs/heads/staging'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
